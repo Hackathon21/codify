@@ -45,3 +45,16 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
+st.markdown("""
+This app retrieves cryptocurrency prices for the top 100 cryptocurrency from the **CoinMarketCap**!
+
+""")
+expander_bar = st.beta_expander("About")
+expander_bar.markdown("""
+* **Python libraries:** base64, pandas, streamlit, numpy, matplotlib, seaborn, BeautifulSoup, requests, json, time
+* **Data source:** [CoinMarketCap](http://coinmarketcap.com).
+""")
+col1, col2 = st.beta_columns((1,1))
+col1.header('Input Options')
+currency_price_unit = col1.selectbox('Select currency for price', ('USD', 'BTC', 'ETH'))
