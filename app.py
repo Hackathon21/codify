@@ -33,6 +33,9 @@ st.markdown(
         display: flex;
         align-items: center;
     }
+    .block-container{
+        padding-top: 20px;
+    }
     .logo-text {
         font-weight:700 !important;
         font-size:50px !important;
@@ -52,7 +55,7 @@ st.markdown(
 )
 
 st.markdown(
-    f"""
+    f"""    
     <div class="container">
         <img class="logo-img" src="data:image/png;base64,{base64.b64encode(open(LOGO_IMAGE, "rb").read()).decode()}">
         <p class="logo-text">नMASTE CRYPटो</p>
@@ -138,10 +141,10 @@ selected_percent_timeframe = percent_dict[percent_timeframe]
 
 sort_values = col1.selectbox('Sort values?', ['Yes', 'No'])
 
-col2.subheader('Price Data of Selected Cryptocurrency')
-col2.write('Data Dimension: ' + str(df_selected_coin.shape[0]) + ' rows and ' + str(df_selected_coin.shape[1]) + ' columns.')
+col1.subheader('Price Data of Selected Cryptocurrency')
+col1.write('Data Dimension: ' + str(df_selected_coin.shape[0]) + ' rows and ' + str(df_selected_coin.shape[1]) + ' columns.')
 
-col2.dataframe(df_coins)
+col1.dataframe(df_coins)
 
 def filedownload(df):
     csv = df.to_csv(index=False)
@@ -149,12 +152,39 @@ def filedownload(df):
     href = f'<a href="data:file/csv;base64,{b64}" download="crypto.csv">Download CSV File</a>'
     return href
 
-col2.markdown(filedownload(df_selected_coin), unsafe_allow_html=True)
+col1.markdown(filedownload(df_selected_coin), unsafe_allow_html=True)
 
-col2.subheader('Table of % Price Change')
+col1.subheader('Table of % Price Change')
 df_change = pd.concat([df_coins.coin_symbol, df_coins.percentChange1h, df_coins.percentChange24h, df_coins.percentChange7d], axis=1)
 df_change = df_change.set_index('coin_symbol')
 df_change['positive_percent_change_1h'] = df_change['percentChange1h'] > 0
 df_change['positive_percent_change_24h'] = df_change['percentChange24h'] > 0
 df_change['positive_percent_change_7d'] = df_change['percentChange7d'] > 0
-col2.dataframe(df_change)
+col1.dataframe(df_change)
+
+col2.subheader('Bar plot of % Price Change')
+
+if percent_timeframe == '7d':
+    if sort_values == 'Yes':
+        df_change = df_change.sort_values(by=['percentChange7d'])
+    col2.write('*7 days period*')
+    plt.figure(figsize=(5,25))
+    plt.subplots_adjust(top = 1, bottom = 0)
+    df_change['percentChange7d'].plot(kind='barh', color=df_change.positive_percent_change_7d.map({True: 'g', False: 'r'}))
+    col2.pyplot(plt)
+elif percent_timeframe == '24h':
+    if sort_values == 'Yes':
+        df_change = df_change.sort_values(by=['percentChange24h'])
+    col2.write('*24 hour period*')
+    plt.figure(figsize=(5,25))
+    plt.subplots_adjust(top = 1, bottom = 0)
+    df_change['percentChange24h'].plot(kind='barh', color=df_change.positive_percent_change_24h.map({True: 'g', False: 'r'}))
+    col2.pyplot(plt)
+else:
+    if sort_values == 'Yes':
+        df_change = df_change.sort_values(by=['percentChange1h'])
+    col2.write('*1 hour period*')
+    plt.figure(figsize=(5,25))
+    plt.subplots_adjust(top = 1, bottom = 0)
+    df_change['percentChange1h'].plot(kind='barh', color=df_change.positive_percent_change_1h.map({True: 'g', False: 'r'}))
+    col2.pyplot(plt)
