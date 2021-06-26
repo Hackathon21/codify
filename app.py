@@ -33,8 +33,10 @@ st.markdown(
         display: flex;
         align-items: center;
     }
+
     .block-container{
         padding-top: 20px;
+        padding-bottom: 0px;
     }
     .logo-text {
         font-weight:700 !important;
@@ -45,9 +47,10 @@ st.markdown(
     }
     .logo-img {
         float:right;
-        width : 10%;
-        height :20%;
+        width : 15%;
+        
         padding-right: 10px;
+        border-radius: 50%;
     }
     .eknhn3m4{
         display: none;
@@ -194,7 +197,7 @@ else:
     df_change['percentChange1h'].plot(kind='barh', color=df_change.positive_percent_change_1h.map({True: 'g', False: 'r'}))
     col2.pyplot(plt)
 
-# email se
+# email section
 
 import streamlit as st
 form = st.form(key='my-form')
@@ -237,3 +240,52 @@ col4.info(string_summary)
 
 st.header('**Stock data**')
 st.write(tickerDf)
+
+
+st.header('**Bollinger Bands**')
+qf=cf.QuantFig(tickerDf,title='First Quant Figure',legend='top',name='GS')
+qf.add_bollinger_bands()
+fig = qf.iplot(asFigure=True)
+st.plotly_chart(fig)
+
+
+# prediction_graph
+st.title("Bitcoin Predicted Graph")
+st.image("bitcoin-graph.png")
+
+st.title("Doge Predicted Graph")
+st.image("doge-graph.png")
+
+st.title("Etherium Predicted Graph")
+st.image("etherium-graph.png")
+
+# footer
+
+footer="""<style>
+a:link , a:visited{
+color: blue;
+background-color: transparent;
+text-decoration: underline;
+}
+
+a:hover,  a:active {
+color: red;
+background-color: transparent;
+text-decoration: underline;
+}
+
+.footer {
+
+left: 0;
+bottom: 0;
+width: 100%;
+background-color: white;
+color: black;
+text-align: center;
+}
+</style>
+<div class="footer">
+<p>Developed with ❤ by <a style='display: block; text-align: center;' href="#" target="_blank">CODIFY</a></p>
+</div>
+"""
+st.markdown(footer,unsafe_allow_html=True)
