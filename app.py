@@ -49,6 +49,11 @@ st.markdown(
         height :20%;
         padding-right: 10px;
     }
+    .eknhn3m4{
+        display: none;
+    }
+    
+
     </style>
     """,
     unsafe_allow_html=True
@@ -66,6 +71,7 @@ st.markdown(
 
 st.markdown("""
 This app retrieves cryptocurrency prices for the top 100 cryptocurrency from the **CoinMarketCap**!
+
 """)
 
 expander_bar = st.beta_expander("About")
@@ -187,3 +193,47 @@ else:
     plt.subplots_adjust(top = 1, bottom = 0)
     df_change['percentChange1h'].plot(kind='barh', color=df_change.positive_percent_change_1h.map({True: 'g', False: 'r'}))
     col2.pyplot(plt)
+
+# email se
+
+import streamlit as st
+form = st.form(key='my-form')
+email = form.text_input('Enter your EMAIL')
+submit = form.form_submit_button('Submit')
+
+st.write('Press submit to have your present bitcoin price')
+
+if submit:
+    st.write(f'BITCOIN PRICE SENT TO YOUR MAIL <{email}>')
+
+# new section
+
+st.markdown('''
+# Stock Price App
+Shown are the stock price data for query companies!
+- Built in `Python` using `streamlit`,`yfinance`, `cufflinks`, `pandas` and `datetime`
+''')
+st.write('---')
+
+col3, col4 = st.beta_columns((1,2))
+
+col3.subheader('Query parameters')
+start_date = col3.date_input("Start date", datetime.date(2019, 1, 1))
+end_date = col3.date_input("End date", datetime.date(2021, 1, 31))
+
+ticker_list = pd.read_csv('https://raw.githubusercontent.com/dataprofessor/s-and-p-500-companies/master/data/constituents_symbols.txt')
+tickerSymbol = col3.selectbox('Stock ticker', ticker_list) # Select ticker symbol
+tickerData = yf.Ticker(tickerSymbol) # Get ticker data
+tickerDf = tickerData.history(period='1d', start=start_date, end=end_date) #get the historical prices for this ticker
+
+string_logo = '<img src=%s>' % tickerData.info['logo_url']
+col4.markdown(string_logo, unsafe_allow_html=True)
+
+string_name = tickerData.info['longName']
+col4.header('**%s**' % string_name)
+
+string_summary = tickerData.info['longBusinessSummary']
+col4.info(string_summary)
+
+st.header('**Stock data**')
+st.write(tickerDf)
